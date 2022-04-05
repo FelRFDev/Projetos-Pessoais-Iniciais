@@ -4,7 +4,7 @@ Este projeto foi idealizado para ser utilizado no meu ambiente de trabalho e tem
 visando tornar práticas e ágeis as atividades desempenhadas no dia a dia. A consulta das informações pode ser feita manualmente onde o usuário digita
 o que ele deseja consultar e/ou buscar, e também através de comandos de voz por meio da assistente virutal implementada no sistema. Esta, vem com diversas
 funcionalidades extras como abrir o navegador, pesquisar por uma música, realizar pesquisas e muito mais. Projeto sem fins comerciais visando somente a prática e
-o aprendizado, para usu pessoal e dos demais colegas de trabalho.
+o aprendizado, para uso pessoal e dos demais colegas de trabalho.
 
 
 
