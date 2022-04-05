@@ -32,3 +32,10 @@ o aprendizado, para uso pessoal e dos demais colegas de trabalho.
   Para utilizar o programa você deve colocar o módulo funções dentro de alguma pasta ou local de seu interesse e mudar o nome dessa pasta no início do código do arquivo Gdp.py onde é feita a importação! Por ser um programa simples cujo banco de dados é feito por meio da manipulação de arquivos de extensão .txt, não é necessário
 possuir um computador potente.
 </div>
+
+## Contato
+
+Dúvidas, sugestões e etc:
+
+E-mail: comunidadehawks@gmail.com
+Linkedin: https://www.linkedin.com/in/felipe-rodrigues-fonseca-843b9421a/
