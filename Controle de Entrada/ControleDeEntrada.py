@@ -92,23 +92,23 @@ class bdFuncoes:
 def EnviaEmail():
     """Função para enviar um e-mail com um arquivo em anexo."""
     try:
-        fromaddr = "comunidadehawks@gmail.com" #endereço de e-mail utilizado para enviar a mensagem com anexo.
-        toaddr = 'autosender31@gmail.com' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
+        fromaddr = "inserir Email" #endereço de e-mail utilizado para enviar a mensagem com anexo.
+        toaddr = 'inserirEmail' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
         msg['From'] = fromaddr #Preenche o campo de remetente do e-mail com a variável fromaddr.
         msg['To'] = toaddr #Preenche o campo de destinatário com a variável toaddr.
         msg['Subject'] = "Relatório do dia" #Preenche o campo de assunto com o texto inserido aqui.
-        if msg['To'] == 'autosender31@gmail.com':
-            body = f"\nOlá Felipe, segue o relatório do dia: {dataAtualN} !" #Cria o corpo de texto da mensagem
+        if msg['To'] == 'InserirEmail':
+            body = f"\nOlá , segue o relatório do dia: {dataAtualN} !" #Cria o corpo de texto da mensagem
         else:
-            body = f"\nOlá Felipe, segue o relatório do dia: {dataAtualN} !"  # Cria o corpo de texto da mensagem
+            body = f"\nOlá , segue o relatório do dia: {dataAtualN} !"  # Cria o corpo de texto da mensagem
 
         msg.attach(MIMEText(body, 'plain')) #Preenche o corpo de texto da mensagem com os dados da variável body
 
-        filename = 'C:/Users/09689695690/PycharmProjects/pythonProject/registro.txt' #define qual arquivo será anexado
+        filename = 'Inserir path do arquivo ou arquivo' #define qual arquivo será anexado
 
-        attachment = open('registro.txt', 'rb') #anexa o arquivo à mensagem
+        attachment = open('nomedoArquivo.txt', 'rb') #anexa o arquivo à mensagem
 
         # a partir da linha 50 até a 57,converte o arquivo para base64, adiciona o nome dele no título do arquivo e
         # junta o arquivo à variável msg com o restante das informações do e-mail.
@@ -123,7 +123,7 @@ def EnviaEmail():
 
         server = smtplib.SMTP('smtp.gmail.com: 587') #cria uma conexão com o servidor do gmail.
         server.starttls() #inicia a conexão com o servidor do gmail.
-        server.login(fromaddr, "888888LF23") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
+        server.login(fromaddr, "InserirSenhadoEmail") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
         text = msg.as_string() #Convertemos as informações armazenadas na variável msg para string.
         server.sendmail(fromaddr, toaddr, text) #envia o email preenchendo com as informações definidas acima
         server.quit()
@@ -241,7 +241,7 @@ while True:
                 cont = input('DESEJA REALMENTE APAGAR??\n\n'
                              'CASO PROSSIGA NÃO SERÁ POSSÍVEL DESFAZER O PROCEDIMENTO[s/n]: ')
                 if cont == 's':
-                    print('ESVAIANDO BANCO DE DADOS...')
+                    print('ESVAZIANDO BANCO DE DADOS...')
                     with open('bd.json','r') as bd:
                         dados = json.load(bd)
                         for dado in tqdm(dados):
@@ -267,7 +267,7 @@ while True:
                     print('RETORNANDO AO MENU DE VISITANTES!!!')
                     sleep(2.0)
                 else:
-                    with open('registro.txt','w') as Registro:
+                    with open('NomedoArquivo.txt','w') as Registro:
                         for listas in dados:
                             Registro.write(f'Nome: {listas[0]} / Placa: {listas[1]} / Hora de Entrada: {listas[2]} / Hora de Saída: {listas[3]}')
                             Registro.write('\n\n')
@@ -281,7 +281,7 @@ while True:
                         lista = []
                         json.dump(lista,BD)
 
-                    with open('registro.txt','w'):
+                    with open('NomedoArquivo','w'):
                         pass
                     sleep(1.6)
 
