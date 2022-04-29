@@ -54,17 +54,7 @@ class BancoDados:
         else:
             print('BANCO DE DADOS CARREGADO COM SUCESSO!')
 
-    def CriaRegistro(self,NomedoArquivo):
-        """Método responsável por criar um arquivo de extensão. txt
-        para que seja enviado em anexo por e-mail contendo as informações cadastradas"""
-        try:
-            with open(f'{NomedoArquivo}.txt', 'r'):
-                pass
-        except FileNotFoundError:
-            with open(f'{NomedoArquivo}.txt', 'w'):
-                print('Registro Criado com sucesso!')
-        else:
-            print('Registro carregado com sucesso!')
+
 
 class bdFuncoes:
     """Classe responsável por realizar as funcionalidades
@@ -90,8 +80,10 @@ class bdFuncoes:
         return self.visitor
 
 
-def EnviaEmail():
-    """Função para enviar um e-mail com um arquivo em anexo."""
+def EnviaEmail(nomeDoArquivo):
+    """Função para enviar um e-mail com um arquivo em anexo.
+    Parâmetro:
+    -nomeDoArquivo : Colocar entre aspas (' ') o nome do arquivo.extensão ao chamar a função"""
     try:
         fromaddr = "InserirEmail" #endereço de e-mail utilizado para enviar a mensagem com anexo.
         toaddr = 'InserirEmail' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
@@ -100,16 +92,13 @@ def EnviaEmail():
         msg['From'] = fromaddr #Preenche o campo de remetente do e-mail com a variável fromaddr.
         msg['To'] = toaddr #Preenche o campo de destinatário com a variável toaddr.
         msg['Subject'] = "Relatório do dia" #Preenche o campo de assunto com o texto inserido aqui.
-        if msg['To'] == 'InserirEmail':
-            body = f"\nOlá, segue o relatório do dia: {dataAtualN} !" #Cria o corpo de texto da mensagem
-        else:
-            body = f"\nOlá, segue o relatório do dia: {dataAtualN} !"  # Cria o corpo de texto da mensagem
-
+        body = f"\nOlá, segue o relatório do dia: {dataAtualN} !" #Cria o corpo de texto da mensagem
+        
         msg.attach(MIMEText(body, 'plain')) #Preenche o corpo de texto da mensagem com os dados da variável body
 
-        filename = 'InserirNomedoArquivo.docx' #define qual arquivo será anexado
+        filename = nomeDoArquivo #define qual arquivo será anexado
 
-        attachment = open('InserirNomedoArquivo.docx', 'rb') #anexa o arquivo à mensagem
+        attachment = open(nomeDoArquivo, 'rb') #anexa o arquivo à mensagem
 
         # a partir da linha 50 até a 57,converte o arquivo para base64, adiciona o nome dele no título do arquivo e
         # junta o arquivo à variável msg com o restante das informações do e-mail.
