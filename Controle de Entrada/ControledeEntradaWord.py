@@ -291,7 +291,7 @@ while True:
                     for dados in tqdm(dados):
                         sleep(0.6)
 
-                    EnviaEmail()
+                    EnviaEmail(nomeDoArquivo)
 
                     with open('bd.json','w') as BD:
                         lista = []
