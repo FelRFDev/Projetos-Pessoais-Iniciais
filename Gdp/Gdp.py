@@ -1,6 +1,8 @@
-from nomedapasta.funcoes import *
+from mundo2.funcoes import *
 from tqdm import tqdm
 import os
+import json
+import docx
 # -=-=-=-=-= "Paleta de cores" =-=-=-=-=-=-=-=-
 os.system("")
 cores = {
@@ -25,19 +27,59 @@ input(f'{cores["negrito"]}Aperte enter para continuar!{cores["semcor"]}')
 
 
 #Criando banco de dados para chaves
-CriaBD('chaves.txt','nums.txt','Chaves','Número das Chaves')
+statusChave = CriaBD('chaves.txt','nums.txt',)
 
 #Criando banco de dados para ramais
-CriaBD('NomeRamal.txt','NumRamal.txt','Nomes dos Ramais', 'Número dos ramais')
+statusRamal = CriaBD('NomeRamal.txt','NumRamal.txt',)
 
 #Criando banco de dados para lista de afazeres
-SimpleBD('Afazeres.txt','Lista de Afazeres')
+statusAfazeres = SimpleBD('Afazeres.txt',)
 
-temp1 = []
-temp2 = []
+#Criando banco de dados para alterações no setor
+statusAlteracoes = BdJson('Alt.json',)
+
+#Criando dados para projetores
+statusProjetores = BdJson('Projetores.json')
+
+statusList = list()
+statusList.append(statusChave)
+statusList.append(statusRamal)
+statusList.append(statusAfazeres)
+statusList.append(statusAlteracoes)
+statusList.append(statusProjetores)
+
+
+
+
+
+
+
+temp1 = [] #lista para as chaves
+temp2 = [] #lista para as chaves
+temp3 = [] #lista para alterações no setor
+temp4 = [] #lista para projetores
 
 
 while True:
+    if False in statusList:
+        print(statusList)
+        posicao = statusList.index(False)
+        print(f'{cores["vermelho"]}HOUVE UM ERRO COM O BANCO DE DADOS!{cores["semcor"]}')
+        match posicao+1:
+            case 1:
+                print('ERRO: BANCO PARA CHAVES!')
+            case 2:
+                print('ERRO: BANCO PARA RAMAL')
+            case 3:
+                print('ERRO: BANCO PARA AFAZERES!')
+            case 4:
+                print('ERRO: BANCO PARA ALTERAÇÕES')
+            case 5:
+                print('ERRO: BANCO PARA PROJETORES')
+        input('Aperte enter para sair...')
+        break
+    else:
+        print(f'{cores["negrito"]}BANCO DE DADOS STATUS: {cores["verde"]} [OK] {cores["semcor"]}')
     # -=-=-=-=-=-=-=-=-=-=-=-=-=  MENU PRINCIPAL-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
     opc_inicial = ''
     try:
@@ -53,14 +95,14 @@ while True:
             # -=-=-=-=-=-=-=-=-=-=-=-=-=  MENU INICIAL -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             while True:
                 try:
-                    menuin = menu(['CONTROLE DE CHAVES','CONTROLE DE RAMAL', 'LISTA DE AFAZERES','VOLTAR AO MENU PRINCIPAL'],'MENU INICIAL')
-                    if menuin < 1 or menuin > 4:
+                    menuin = menu(['CONTROLE DE CHAVES','CONTROLE DE RAMAL','LISTA DE AFAZERES','ALTERAÇÕES NO SETOR','CONTROLE DE PROJETORES','COBRANÇA DE MATERIAIS','VOLTAR AO MENU PRINCIPAL'],'MENU INICIAL')
+                    if menuin < 1 or menuin > 7:
                         print(f'{cores["negrito"]}{cores["vermelho claro"]}ERRO!{cores["semcor"]} OPÇÃO => {cores["vermelho claro"]}{menuin}{cores["semcor"]} <= INVÁLIDA!!')
                         continue
                 except (TypeError, ValueError):
                     mensagemerro()
                 else:
-                    if menuin == 4:
+                    if menuin == 7:
                         print(f'{cores["negrito"]}VOLTANDO AO MENU PRINCIPAL')
                         sleep(1.2)
                         print()
@@ -355,7 +397,7 @@ while True:
                                                 break
 
                     #INICIO DA ESTRUTURA DE CONTROLE DE RAMAIS
-                    if menuin == 2:
+                    elif menuin == 2:
                         while True:
                             try:
                                 opcRA = menu([f'ADICIONAR RAMAL', 'REMOVER RAMAL', 'EDITAR RAMAL', 'CONSULTAR CADASTRO','LIMPAR CADASTRO','SAIR\n'], 'MENU PARA RAMAIS')  # <========= CRIANDO O MENU
@@ -645,7 +687,7 @@ while True:
                                                 sleep(2.0)
                                                 break
                         # CODIGOS PARA LISTA DE AFAZERES
-                    if menuin == 3:
+                    elif menuin == 3:
                         while True:
                             try:
                                 menuafa = menu(['ADICIONAR TAREFA', 'REMOVER TAREFA', 'CONSULTAR TAREFAS','LIMPAR LISTA DE AFAZERES','VOLTAR AO MENU ANTERIOR'],'OPÇÕES PARA LISTA DE AFAZERES')
@@ -774,6 +816,348 @@ while True:
                                                     print(f'{cores["verde"]}LISTA ESVAZIADA COM SUCESSO!!!{cores["semcor"]}')
                                                 sleep(2.0)
                                                 break
+                    elif menuin == 4:
+                        #Códigos para controle de alterações=================
+                        while True:
+                            try:
+                                escolha = menu(['Adicionar Alteração','Consultar Alterações','Remover Alteração',
+                                                'Limpar Dados','Enviar dados por E-mail','Voltar ao Menu Inicial'],'ALTERAÇÕES NO SETOR')
+                                if escolha < 1 or escolha > 6:
+                                    raise ValueError(f'{cores["vermelho"]}Erro opção -> {escolha} <- INVÁLIDA!{cores["semcor"]}')
+                                if escolha == 6:
+                                    print(f'{cores["negrito"]}VOLTANDO AO MENU INICIAL...{cores["semcor"]}')
+                                    sleep(1.8)
+                                    break
+                            except ValueError as erro:
+                                print(erro)
+                                continue
+
+                            else:
+                                if escolha == 1:
+                                    print('\nADICIONAR ALTERAÇÃO\n')
+                                    while True:
+
+                                        temp3.clear()
+                                        alt = []
+
+                                        with open('Alt.json', 'r') as bd:
+                                            dados = json.load(bd)
+                                        temp3 = dados.copy()
+
+                                        try:
+                                            alteracao = input('Digite o que foi alterado no setor ou sair para voltar\n'
+                                                              'ao menu ALTERAÇÕES NO SETOR: ').strip()
+                                            if alteracao == 'sair':
+                                                print(f'{cores["negrito"]}VOLTANDO AO MENU ALTERAÇÕES NO SETOR...{cores["semcor"]}')
+                                                sleep(1.8)
+                                                break
+                                            if not alteracao:
+                                                raise ValueError(f'{cores["vermelho"]}ERRO, você precisa informar algo!{cores["semcor"]}\n')
+                                            for alts in temp3:
+                                                if alteracao in alts:
+                                                    raise ValueError(f'{cores["vermelho"]}ERRO, ESTE EVENTO JÁ FOI REGISTRADO!{cores["semcor"]}\n')
+                                        except ValueError as Error:
+                                            print(Error)
+                                            continue
+                                        else:
+                                            alt.append(alteracao)
+                                            while True:
+                                                try:
+                                                    data = input('Informe a data do acontecimento no formato dia/mês/ano: ').strip()
+                                                    if not data:
+                                                        raise ValueError(f'{cores["vermelho"]}ERRO, você precisa informar algo!{cores["semcor"]}\n')
+                                                except ValueError as Error:
+                                                    print(Error)
+                                                    continue
+                                                else:
+                                                    alt.append(data)
+                                                    while True:
+                                                        try:
+                                                            horario = input('Informe o horário do acontecimento: ').strip()
+                                                            if not horario:
+                                                                raise ValueError(f'{cores["vermelho"]}ERRO, você precisa informar algo!{cores["semcor"]}\n')
+                                                        except ValueError as Error:
+                                                            print(Error)
+                                                            continue
+                                                        else:
+                                                            alt.append(horario)
+                                                            temp3.append(alt)
+
+                                                            with open('Alt.json','w') as dados:
+                                                                json.dump(temp3,dados)
+                                                            print(f'{cores["verde"]}Alteração cadastrada COM SUCESSO!{cores["semcor"]}')
+                                                            break
+                                                    break
+                                elif escolha == 2:
+                                    print('CONSULTA DE ALTERAÇÕES')
+                                    temp3.clear()
+
+                                    with open('Alt.json','r') as Data:
+                                        alte = json.load(Data)
+                                        temp3 = alte.copy()
+
+                                    if len(temp3) == 0:
+                                        print(f'{cores["negrito"]}CADASTRO VAZIO...{cores["semcor"]}')
+                                        sleep(1.2)
+
+                                    for cod,alter in enumerate(temp3):
+                                        print(f'CÓD:[{cod+1}]- Alteração: {alter[0]:<5} / Data: {alter[1]:^10} / Horário: {alter[2]:>5}')
+
+                                elif escolha == 3:
+                                    print('REMOVER ALTERAÇÃO')
+                                    while True:
+                                        temp3.clear()
+
+                                        with open('Alt.json','r') as altDados:
+                                            dados = json.load(altDados)
+                                        temp3 = dados.copy()
+
+                                        #Código responsável por deletar registros de alteração
+                                        try:
+                                            altRem = input('Digite o CÓDIGO da alteração a ser removida ou 0 para voltar ao menu: ').strip()
+                                            if not altRem:
+                                                raise ValueError(f'{cores["vermelho"]}ERRO, você precisa informar algo!{cores["semcor"]}\n')
+                                            elif altRem == '0':
+                                                break
+                                            elif altRem.isalpha():
+                                                raise ValueError(f'{cores["vermelho"]}ERRO, NÃO É PERMITIDO LETRAS!{cores["semcor"]}\n')
+                                            else:
+                                                altRem = int(altRem)
+                                            if altRem > len(temp3) or altRem <=0: #verifica se o número digitado coincide com o indice das listas
+                                                raise ValueError(f'{cores["vermelho"]}ERRO, EVENTO NÃO ENCONTRADO!{cores["semcor"]}\n')
+                                        except ValueError as Error:
+                                            print(Error)
+                                            continue
+                                        else:
+                                            temp3.pop(altRem-1) #precisa ser -1 para coincidir com o indice das listas
+
+                                            with open('Alt.json','w') as altDados:
+                                                json.dump(temp3,altDados)
+                                            print(f'{cores["verde"]}EVENTO REMOVIDO COM SUCESSO!{cores["semcor"]}')
+                                            sleep(1.2)
+
+
+                                elif escolha == 4:
+                                    print(f'{cores["vermelho"]}ATENÇÃO... VOCÊ ESTÁ PRESTES A LIMPAR TODOS OS DADOS CADASTRADOS!{cores["semcor"]}')
+                                    while True:
+                                        try:
+                                            continuar = input('Deseja prosseguir?[s/n]: ').strip()
+                                            if not continuar:
+                                                raise ValueError(f'{cores["vermelho"]}ERRO, você precisa digitar algo!{cores["semcor"]}\n')
+                                        except ValueError as error:
+                                            print(error)
+                                            continue
+                                        else:
+                                            if continuar == 'n':
+                                                print(f'{cores["negrito"]}Voltando ao MENU...{cores["semcor"]}')
+                                                sleep(1.8)
+                                                break
+
+                                            temp3.clear()
+                                            with open('Alt.json', 'r') as dados:
+                                                cadastro = json.load(dados)
+                                            temp3 = cadastro.copy()
+
+                                            for alteracao in tqdm(temp3):
+                                                sleep(0.5)
+
+                                            with open('Alt.json','w') as AltDados:
+                                                emptyData = []
+                                                json.dump(emptyData,AltDados)
+                                            print(f'{cores["verde"]}Alterações esvaziadas com sucesso!{cores["semcor"]}')
+                                            sleep(1.5)
+                                            break
+                                elif escolha == 5:
+                                    print('ENVIAR ALTERAÇÕES POR E-MAIL')
+
+                                    temp3.clear()
+                                    with open('Alt.json','r') as bdAlt:
+                                        alts = json.load(bdAlt)
+                                    temp3 = alts.copy()
+
+                                    if len(temp3) == 0:
+                                        print(f'{cores["vermelho"]}CADASTRO DE ALTERAÇÕES VAZIO! RETORNANDO AO MENU ANTERIOR...{cores["semcor"]}')
+                                        sleep(1.2)
+                                    else:
+                                        #Código para criar documento word com uma tabela preenchida com os dados ==============
+
+                                        doc = docx.Document()  # cria um arquivo em formato word
+                                        doc.add_heading('Alterações Registradas do Lab. de Informática/Prédio 700', 0)  # Adiciona Título a tabela
+
+                                        # data contém as informações que serão salvas na tabela dentro do arquivo
+
+                                        table = doc.add_table(rows=1, cols=3,style=( 'Colorful List'))  # determina o número e linhas e colunas
+                                        titulo_celula = table.rows[0].cells  # armazena as celulas da linha 0 da tabela (corresponde ao título das células)
+                                        titulo_celula[0].text = 'Alteração'  # define o título da célula dentro da tabela
+                                        titulo_celula[1].text = 'Data Da alteração'  # define o título da célula dentro da tabela
+                                        titulo_celula[2].text = 'Horário'
+
+
+                                        for alt, data, hora in temp3:  # desta linha para baixo, preenche as linhas da tabela com os dados em data.
+                                            linha = table.add_row().cells
+                                            linha[0].text = alt
+                                            linha[1].text = data
+                                            linha[2].text = hora
+
+
+                                        doc.save('Alteracoes.docx')
+
+                                        print('ENVIANDO E-MAIL...')
+                                        for dados in tqdm(temp3):
+                                            sleep(0.6)
+
+                                        EnviaEmail('Alteracoes.docx')
+
+                                        with open('Alt.json','w') as AltsDados:
+                                            emptyData = []
+                                            json.dump(emptyData,AltsDados)
+
+                                        sleep(1.6)
+                    elif menuin == 5:
+                        while True:
+                            try:
+                                # CÓDIGO PARA CONTROLE DE PROJETORES ======================================
+                                escolha = menu(['ADICIONAR PROJETOR','REMOVER PROJETOR','CONSULTAR PROJETORES', 'LIMPAR DADOS','SAIR'],'CONTROLE DE PRJETORES')
+                                if escolha < 1 or escolha > 5:
+                                    raise ValueError(f'{cores["vermelho"]}ERRO, OPÇÃO -> {escolha} <- inválida!{cores["semcor"]}')
+                            except ValueError as erro:
+                                print(erro)
+                                continue
+                            else:
+                                if escolha == 5:
+                                    print('RETORNANDO AO MENU...')
+                                    sleep(1.5)
+                                    break
+                                elif escolha == 1:
+                                    print(f'\n{cores["negrito"]}>>>>>> ADICIONAR PROJETOR <<<<<<<{cores["semcor"]}\n')
+                                    while True:
+                                        temp4.clear()
+
+                                        with open('Projetores.json','r') as Pdados:
+                                            projetores = json.load(Pdados)
+
+                                        temp4 = projetores.copy()
+                                        try:
+
+                                            novoProj = input('Digite a nomenclatura do projetor a ser adicionado ou sair para voltar ao menu: ').strip()
+                                            if not novoProj:
+                                                raise ValueError(f'{cores["vermelho"]}ERRO VOCÊ PRECISA DIGITAR ALGO!{cores["semcor"]}')
+                                            elif novoProj =='sair':
+                                                print('Voltando ao MENU...')
+                                                sleep(1.8)
+                                                break
+                                            elif novoProj in temp4:
+                                                raise ValueError(
+                                                    f'{cores["vermelho"]}ERRO, PROJETOR JÁ CADASTRADO!{cores["semcor"]}')
+                                        except ValueError as erro:
+                                            print(erro)
+                                            continue
+                                        else:
+                                            temp4.append(novoProj)
+
+                                            with open('Projetores.json','w') as Pdados:
+                                                json.dump(temp4,Pdados)
+                                            print(f'Projetor {novoProj} adicionado com sucesso!!!')
+                                elif escolha == 2:
+                                    print(
+                                        f'\n{cores["negrito"]}>>>>>> REMOVER PROJETOR <<<<<<<{cores["semcor"]}\n')
+
+                                    while True:
+                                        temp4.clear()
+
+                                        with open('Projetores.json','r') as Pdados:
+                                            projetores = json.load(Pdados)
+                                        temp4 = projetores.copy()
+
+                                        try:
+                                            removerP = input('Digite qual projetor deseja remover ou sair para voltar ao MENU: ')
+                                            if removerP == 'sair':
+                                                print('VOLTANDO AO MENU...')
+                                                sleep(1.8)
+                                                break
+                                            elif not removerP:
+                                                raise ValueError(f'{cores["vermelho"]}ERRO VOCÊ PRECISA DIGITAR ALGO!{cores["semcor"]}')
+                                            elif removerP not in temp4:
+                                                raise ValueError(
+                                                    f'{cores["vermelho"]}ERRO, PROJETOR NÃO CADASTRADO!{cores["semcor"]}')
+                                        except ValueError as erro:
+                                            print(erro)
+                                            continue
+                                        else:
+                                            temp4.remove(removerP)
+
+                                            with open('Projetores.json','w') as Pdados:
+                                                json.dump(temp4,Pdados)
+                                            print(f'{cores["verde"]}Projetor {removerP} removido com SUCESSO!!!{cores["semcor"]}')
+
+                                elif escolha == 3:
+                                    print(f'\n{cores["negrito"]}>>>>>> CONSULTA DE PROJETORES DISPONÍVEIS <<<<<<<{cores["semcor"]}\n')
+                                    temp4.clear()
+                                    with open('Projetores.json','r') as Pdados:
+                                        projetores = json.load(Pdados)
+
+                                    temp4 = projetores.copy()
+
+                                    for projetor in temp4:
+                                        print(f' - {projetor}')
+
+                                    input('\nAPERTE ENTER PARA VOLTAR AO MENU...')
+
+                                elif escolha == 4:
+                                    print(
+                                        f'{cores["vermelho"]}ATENÇÃO... VOCÊ ESTÁ PRESTES A LIMPAR TODOS OS DADOS CADASTRADOS!{cores["semcor"]}')
+                                    while True:
+                                        try:
+                                            opc = ['s','n']
+                                            continuar = input('Deseja prosseguir?[s/n]: ').strip()
+                                            if not continuar:
+                                                raise ValueError(
+                                                    f'{cores["vermelho"]}ERRO, você precisa digitar algo!{cores["semcor"]}\n')
+                                            elif continuar not in opc:
+                                                raise ValueError(
+                                                    f'{cores["vermelho"]}ERRO, digite s ou n !{cores["semcor"]}\n')
+                                        except ValueError as error:
+                                            print(error)
+                                            continue
+                                        else:
+                                            if continuar == 'n':
+                                                print(f'{cores["negrito"]}Voltando ao MENU...{cores["semcor"]}')
+                                                sleep(1.8)
+                                                break
+
+                                            temp4.clear()
+                                            with open('Projetores.json','r') as pDados:
+                                                projetores = json.load(pDados)
+
+                                            print('Esvaziando cadastro...')
+
+                                            for dados in tqdm(projetores):
+                                                sleep(0.5)
+
+                                            with open('Projetores.json','w') as pDados:
+                                                emptyDados = []
+                                                json.dump(emptyDados,pDados)
+                                            print('CADASTRO ESVAZIADO COM SUCESSO!')
+                                            break
+                    elif menuin == 6:
+                        print('>>>> COBRANÇA DE MATERIAIS <<<<<')
+                        while True:
+                            try:
+                                material = input('Digite o material a ser cobrado ou sair para voltar ao menu: ').strip()
+                                if not material:
+                                    raise ValueError(
+                                        f'{cores["vermelho"]}ERRO, você precisa digitar algo!{cores["semcor"]}\n')
+                                elif material == 'sair':
+                                    break
+                            except ValueError as error:
+                                print(error)
+                                continue
+                            else:
+                                email = input('Digite o e-mail do destinatário: ')
+                                EnviaMensgemEmail(email,material)
+                                break
+
+
         elif opc_inicial == 2:
             micon = AssisVirtual()
             if micon == False:
