@@ -740,21 +740,27 @@ while True:
                                             dados = bdafa.readlines()
                                             for tarefas in dados:
                                                 temp1.append(tarefas.strip())
+                                        print(f'{cores["negrito"]} \nTAREFAS CADASTRADAS ATÉ O MOMENTO {cores["semcor"]}\n')
+                                        for cod,tarefas in enumerate(temp1):
+                                            print(f'CÓD: {cores["negrito"]}[{cod+1}]{cores["semcor"]} - Tarefa: {tarefas}')
+                                        print()
                                         try:
-                                            remover = input('Digite a tarefa que deseja remover da lista ou "sair" para voltar ao menu: ')
-                                            if remover == 'sair' or remover == 'Sair':
+                                            remover = input('Digite o Código da tarefa que deseja remover da lista ou "0" para voltar ao menu: ')
+                                            if remover == '0':
                                                 pinta('negrito','VOLTANDO AO MENU ANTERIOR...')
                                                 sleep(1.5)
                                                 break
                                             elif not remover:
                                                 raise ValueError('ERRO, VOCÊ PRECISA DIGITAR ALGO!')
-                                            elif remover not in temp1:
-                                                raise ValueError('ERRO, TAREFA NÃO CADASTRADA!')
                                         except ValueError as Erro:
                                             print(f'{cores["vermelho"]}{Erro}{cores["semcor"]}')
                                             continue
                                         else:
-                                            temp1.remove(remover)
+                                            remover = int(remover)
+                                            if remover < 0 or remover > len(temp1):
+                                                print('ERRO, TAREFA NÃO CADASTRADA!')
+                                                continue
+                                            temp1.pop(remover-1)
                                             with open('Afazeres.txt', 'w') as bdafa:
                                                 for tarefas in temp1:
                                                     bdafa.write(f'{tarefas}\n')
