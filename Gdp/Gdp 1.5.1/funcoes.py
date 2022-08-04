@@ -67,8 +67,8 @@ cores = {
 def EnviaEmail(nomeDoArquivo):
     """Função para enviar um e-mail com um arquivo em anexo."""
     try:
-        fromaddr = "comunidadehawks@gmail.com" #endereço de e-mail utilizado para enviar a mensagem com anexo.
-        toaddr = 'autosender31@gmail.com' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
+        fromaddr = "e-mail do remetente" #endereço de e-mail utilizado para enviar a mensagem com anexo.
+        toaddr = 'e-mail do destinatário' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
         msg['From'] = fromaddr #Preenche o campo de remetente do e-mail com a variável fromaddr.
@@ -96,7 +96,7 @@ def EnviaEmail(nomeDoArquivo):
 
         server = smtplib.SMTP('smtp.gmail.com: 587') #cria uma conexão com o servidor do gmail.
         server.starttls() #inicia a conexão com o servidor do gmail.
-        server.login(fromaddr, "888888LF23") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
+        server.login(fromaddr, "senha gerada pelo google para aplicativos terceiros") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
         text = msg.as_string() #Convertemos as informações armazenadas na variável msg para string.
         server.sendmail(fromaddr, toaddr, text) #envia o email preenchendo com as informações definidas acima
         server.quit()
@@ -109,7 +109,7 @@ def EnviaMensgemEmail(email,material):
     """Função para enviar um e-mail com mensagem personalizada."""
 
     try:
-        fromaddr = "autosender31@gmail.com"  # endereço de e-mail utilizado para enviar a mensagem com anexo.
+        fromaddr = "e-mail do destinatario"  # endereço de e-mail utilizado para enviar a mensagem com anexo.
         toaddr = f'{email}'  # endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
@@ -128,7 +128,7 @@ def EnviaMensgemEmail(email,material):
 
         server = smtplib.SMTP('smtp.gmail.com: 587')  # cria uma conexão com o servidor do gmail.
         server.starttls()  # inicia a conexão com o servidor do gmail.
-        server.login(fromaddr,"envioauto")  # realiza o login preenchendo os campos com o e-mail do remetente e a senha.
+        server.login(fromaddr,"senha gerada pelo google para aplicativos terceiros")  # realiza o login preenchendo os campos com o e-mail do remetente e a senha.
         text = msg.as_string()  # Convertemos as informações armazenadas na variável msg para string.
         server.sendmail(fromaddr, toaddr, text)  # envia o email preenchendo com as informações definidas acima
         server.quit()
