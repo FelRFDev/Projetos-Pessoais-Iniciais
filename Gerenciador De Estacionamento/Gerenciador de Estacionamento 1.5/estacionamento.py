@@ -96,7 +96,7 @@ def EnviaEmail(nomeDoArquivo,destinatario):
     try:
         dataAtual = dt.date.today()
         dataAtualN = dataAtual.strftime('%d/%m/%y')  # Salva a data atual no formato dia/mês/ano
-        fromaddr = "autosender31@gmail.com" #endereço de e-mail utilizado para enviar a mensagem com anexo.
+        fromaddr = "e-mail do remetente" #endereço de e-mail utilizado para enviar a mensagem com anexo.
         toaddr = destinatario #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
@@ -120,7 +120,7 @@ def EnviaEmail(nomeDoArquivo,destinatario):
         attachment.close()
         server = smtplib.SMTP('smtp.gmail.com: 587') #cria uma conexão com o servidor do gmail.
         server.starttls() #inicia a conexão com o servidor do gmail.
-        server.login(fromaddr, "lqvjtaduoqxugedq") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
+        server.login(fromaddr, "Senha gerada pelo google para aplicativos terceiros") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
         text = msg.as_string() #Convertemos as informações armazenadas na variável msg para string.
         server.sendmail(fromaddr, toaddr, text) #envia o email preenchendo com as informações definidas acima
         server.quit()
