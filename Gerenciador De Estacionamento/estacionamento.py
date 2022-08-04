@@ -1,8 +1,6 @@
 from tqdm import tqdm
-# from os import system
 from time import sleep
-# import requests
-# from tkinter import *
+
 
 
 
