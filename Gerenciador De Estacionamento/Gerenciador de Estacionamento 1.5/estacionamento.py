@@ -21,19 +21,20 @@ def bdAnalise():
     except FileNotFoundError:
         with open('dadosMensais.json','w') as dm:
             listaMeses = {
-            'Janeiro': 0,
-            'Fevereiro': 0,
-            'Março': 0,
-            'Abril': 0,
-            'Maio': 0,
-            'Junho': 0,
-            'Julho': 0,
-            'Agosto': 0,
-            'Setembro': 0,
-            'Outubro': 0,
-            'Novembro': 0,
-            'Dezembro': 0,
-            'TotalClientes': 0
+            'Janeiro': [0,0],
+            'Fevereiro': [0,0],
+            'Março': [0,0],
+            'Abril': [0,0],
+            'Maio': [0,0],
+            'Junho': [0,0],
+            'Julho': [0,0],
+            'Agosto': [0,0],
+            'Setembro': [0,0],
+            'Outubro': [0,0],
+            'Novembro': [0,0],
+            'Dezembro': [0,0],
+            'TotalClientes': 0,
+            'LucroMensal':0,
         }
             json.dump(listaMeses,dm)
             print('Banco de dados para DADOS MENSAIS criado com sucesso!')
@@ -41,8 +42,7 @@ def bdAnalise():
         print("Banco de dados para DADOS MENSAIS carregado com sucesso!")
 
 
-
-def criaBD():
+def criaBDclientes():
     try:
         with open('clientes.json','r'):
             pass
@@ -54,10 +54,8 @@ def criaBD():
     else:
         print('Banco de dados carregado com sucesso!')
 
-
 def cadastra_cliente(clientes_dados,nome_do_cliente,dados_do_cliente):
     clientes_dados.update({nome_do_cliente:dados_do_cliente})
-
 
 #Função parar criar menu
 def criamenu(lista, msg):
@@ -70,8 +68,8 @@ def criamenu(lista, msg):
     opc = int(input('Escolha uma opção: '))
     return opc
 
-#função para exibir mensagem de erro
 
+#função para exibir mensagem de erro
 def mensagemerro():
     print('=============================================================================')
     print(
@@ -96,14 +94,14 @@ def EnviaEmail(nomeDoArquivo,destinatario):
     try:
         dataAtual = dt.date.today()
         dataAtualN = dataAtual.strftime('%d/%m/%y')  # Salva a data atual no formato dia/mês/ano
-        fromaddr = "e-mail do remetente" #endereço de e-mail utilizado para enviar a mensagem com anexo.
+        fromaddr = "seu e-mail@gmail.com" #endereço de e-mail utilizado para enviar a mensagem com anexo.
         toaddr = destinatario #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
         msg['From'] = fromaddr #Preenche o campo de remetente do e-mail com a variável fromaddr.
         msg['To'] = toaddr #Preenche o campo de destinatário com a variável toaddr.
         msg['Subject'] = "Relatório Por Períodos" #Preenche o campo de assunto com o texto inserido aqui.
-        body = f"\nOlá, segue em anexo o arquivo do relatório em pdf e imagem.\n\nEnviado no dia: {dataAtualN}!" #Cria o corpo de texto da mensagem
+        body = f"\nOlá, segue em anexo o arquivo do relatório em imagem.\n\nEnviado no dia: {dataAtualN}!" #Cria o corpo de texto da mensagem
 
         msg.attach(MIMEText(body, 'plain')) #Preenche o corpo de texto da mensagem com os dados da variável body
 
@@ -120,7 +118,7 @@ def EnviaEmail(nomeDoArquivo,destinatario):
         attachment.close()
         server = smtplib.SMTP('smtp.gmail.com: 587') #cria uma conexão com o servidor do gmail.
         server.starttls() #inicia a conexão com o servidor do gmail.
-        server.login(fromaddr, "Senha gerada pelo google para aplicativos terceiros") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
+        server.login(fromaddr, "senha do email que irá enviar a mensagem") #realiza o login preenchendo os campos com o e-mail do remetente e a senha.
         text = msg.as_string() #Convertemos as informações armazenadas na variável msg para string.
         server.sendmail(fromaddr, toaddr, text) #envia o email preenchendo com as informações definidas acima
         server.quit()
@@ -129,10 +127,61 @@ def EnviaEmail(nomeDoArquivo,destinatario):
         print(f'Erro ao enviar email')
 
 
-def geraGrafico(meses,valores):
+def geraGrafico(meses,valores,dadosmensais):
     """Função para gerar um gráfico através dos dados recebidos. Tem como parâmetros:
     -> mes: Parâmetro responsável por receber o argumento contendo o nome do mês. Geralmente uma lista.
     -> valor: Parâmetro responsável por receber o arqumento contendo o valor total mensal. Geralmente uma lista.
+    -> DadosMensais: Parâmetro responsável por conter os dados relacionados a cada mês.(Dict)
+    """
+    colors = ['red','green','yellow','purple','blue']
+    totalIndices = len(valores)
+    for mes,valor in zip(meses,valores):
+        matplotlib.pyplot.bar(mes,int(valor),color=random.choice(colors))#recebe as estruturas contendo o nome dos meses e respectivos valores
+    matplotlib.pyplot.xticks(rotation=45)
+    matplotlib.pyplot.title('Quantidade Total de Clientes por mês\n') #título do grafico
+    matplotlib.pyplot.xlabel(f'Meses\n\n\n\n\n\n') #título do eixo x
+    matplotlib.pyplot.ylabel('Clientes por mês') #título do eixo Y
+    matplotlib.pyplot.ylim(0,max(valores)+10) #Estrutura para atenuar a curva do gráfico
+    maiorValor = max(valores) #encontra o maior valor
+    posMaiorValor = valores.index(maiorValor) #encontra a posição na lista do maior valor
+    matplotlib.pyplot.annotate("Maior valor",
+                xy=(posMaiorValor,maiorValor),#indicando as coordenadas do maior valor
+                xytext=(posMaiorValor, maiorValor + 4),
+                arrowprops=dict(arrowstyle="->", connectionstyle="arc3"))
+    matplotlib.pyplot.text(totalIndices, 6, f'       LUCRO MENSAL\n ')
+    y = 5
+    for mes,luc in dadosmensais.items():
+        y -=3
+        matplotlib.pyplot.text(totalIndices,y,f'  Mês: {mes} - R${luc:.2f}')
+        matplotlib.pyplot.tight_layout()
+    matplotlib.pyplot.grid(axis='y')
+
+    user_Save = input('Deseja salvar o gráfico em arquivo de imagem e PDF? [s/n]: ')
+    if user_Save == 'n':
+        pass
+    else:
+        fileName = input('Digite o nome desejado para o arquivo: ')
+        print('SALVANDO RELATÓRIO, AGUARDE...')
+        sleep(1.3)
+        matplotlib.pyplot.savefig(fileName + '.png')
+        matplotlib.pyplot.savefig(fileName + '.pdf')
+        input('RELATÓRIO SALVO COM SUCESSO NA PASTA DO PROGRAMA!!!')
+        enviaEmail = input('Deseja enviar este relatório via anexo por e-mail? [s/n]: ')
+        if enviaEmail == 'n':
+            pass
+        else:
+            eAdress = input("Digite o endereço de e-mail do destinatário: ")
+            EnviaEmail(fileName+'.png',eAdress)
+    matplotlib.pyplot.show()
+
+
+#===========================================================
+
+def geraGraficoAdmin(meses,valores):
+    """Função para gerar um gráfico através dos dados recebidos. Tem como parâmetros:
+    -> mes: Parâmetro responsável por receber o argumento contendo o nome do mês. Geralmente uma lista.
+    -> valor: Parâmetro responsável por receber o arqumento contendo o valor total mensal. Geralmente uma lista.
+    -> DadosMensais: Parâmetro responsável por conter os dados relacionados a cada mês.(Dict)
     """
     lucroMensal = {'Janeiro':15000.00,'Maio':12000.00,'Abril':15000.00,'Dezembro':15000.00,'Fevereiro':15000.00,
                    'Março':15000.00,'Junho':15000.00,'Julho':15000.00,'Agosto':15000.00,}
@@ -156,8 +205,9 @@ def geraGrafico(meses,valores):
     for mes,lucro in lucroMensal.items():
         y -=3
         matplotlib.pyplot.text(totalIndices,y,f'  Mês: {mes} - R${lucro:.2f}') ####################### >PAREI AQUI
-    matplotlib.pyplot.tight_layout()
+        matplotlib.pyplot.tight_layout()
     matplotlib.pyplot.grid(axis='y')
+
     user_Save = input('Deseja salvar o gráfico em arquivo de imagem e PDF? [s/n]: ')
     if user_Save == 'n':
         pass
@@ -176,10 +226,7 @@ def geraGrafico(meses,valores):
             EnviaEmail(fileName+'.png',eAdress)
     matplotlib.pyplot.show()
 
-
-
 #===========================================================
-
 #paleta de cores
 
 
@@ -204,28 +251,34 @@ cores = {
 
 #programa principal
 
-criaBD() #criando banco de dados para cadastro dos clientes
+criaBDclientes() #criando banco de dados para cadastro dos clientes
 bdAnalise() #criando banco de dados para as informações mensais
 
+precos = {
+    30:10,
+    60:20,
+}
 
-
+totalmin= 0
+totpagar=0
 
 
 def programaprincipal():
     monthList = {
-        'Janeiro': 0,
-        'Fevereiro': 0,
-        'Março': 0,
-        'Abril': 0,
-        'Maio': 0,
-        'Junho': 0,
-        'Julho': 0,
-        'Agosto': 0,
-        'Setembro': 0,
-        'Outubro': 0,
-        'Novembro': 0,
-        'Dezembro': 0,
-        'TotalClientes': 0,
+            'Janeiro': [0,0],
+            'Fevereiro': [0,0],
+            'Março': [0,0],
+            'Abril': [0,0],
+            'Maio': [0,0],
+            'Junho': [0,0],
+            'Julho': [0,0],
+            'Agosto': [0,0],
+            'Setembro': [0,0],
+            'Outubro': [0,0],
+            'Novembro': [0,0],
+            'Dezembro': [0,0],
+            'TotalClientes': 0,
+            'LucroMensal':0,
         }
     periodos = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
                 'Novembro', 'Dezembro']
@@ -248,11 +301,11 @@ def programaprincipal():
     while True:
         try:
             print()
-            menu = criamenu(['Cadastrar horário','Liberar vaga','Liberar todas as vagas','Disponibilidade das Vagas','Finalizar Diária','Gerar Relatório','Sair'], 'MENU INICIAL')
+            menu = criamenu(['Cadastrar horário','Liberar vaga','Liberar todas as vagas','Disponibilidade das Vagas','Finalizar Diária','Gerar Relatório','Sair','Gerar Relatório (VERSÃO ADMIN)'], 'MENU INICIAL')
         except(TypeError,ValueError):
             mensagemerro()
             continue
-        if menu > 7 or menu < 1:
+        if menu > 8 or menu < 1:
             erroopcao(menu)
             continue
         elif menu == 1:
@@ -261,11 +314,12 @@ def programaprincipal():
                 with open('clientes.json','r') as bdDados:
                     bd = json.load(bdDados)
                     customers = bd
+
+                #dicionário com listas no qual o índice 0 é o total de clientes e o índice 1 o lucro mensal
                 with open('dadosMensais.json','r') as menDados:
                     mdados = json.load(menDados)
                     monthList = mdados
 
-                print(customers)
                 #Adiciona horario das vagas:
                 horae = input('Digite a hora de entrada no formato (Hora:Minuto): ')
                 if len(horae) < 4 or len(horae) > 5:
@@ -307,7 +361,6 @@ def programaprincipal():
                     with open('clientes.json','w') as bdDados:
                         json.dump(customers,bdDados)
 
-
                 vaga = input('Digite a vaga a ser ocupada: ')
                 while vaga not in estacionamento.keys() or len(estacionamento[vaga]) > 0:
                     if vaga not in estacionamento.keys():
@@ -320,17 +373,38 @@ def programaprincipal():
                         print(f'{cores["vermelho"]}ERRO, a vaga já está ocupada!{cores["fechacor"]}')
                         print()
                         vaga = input('Digite a vaga a ser ocupada: ')
+
+                #Parte do código responsável pelos cálculos
                 estacionamento[vaga].append(motorista)
                 for dados in customers[motorista]:
                     estacionamento[vaga].append(dados)
                 estacionamento[vaga].append(horae)
                 estacionamento[vaga].append(horas)
+
+                #Calculando total a pagar
+                totalH = int(horas[:2]) - int(horae[:2])
+
+                global totpagar
+                global totalmin
+                if int(horas[3:]) > int(horae[3:]):
+                    totalmin = int(horas[3:]) - int(horae[3:])
+                elif int(horas[3:]) < int(horae[3:]):
+                    totalmin = int(horae[3:]) - int(horas[3:])
+                if totalmin != 0 and totalmin != 30:
+                    totalmin = 30
+                if totalmin == 0:
+                    totpagar = precos[60] * totalH
+                else:
+                    totpagar = (precos[60] * totalH) + precos[30]
+                totpagar = float(totpagar)
                 monthList["TotalClientes"] +=1
+                monthList["LucroMensal"] += totpagar
+                print(f'TOTAL A PAGAR: R$ {totpagar:.2f}')  # total a pagar
                 # ========== salva a quantidade de clientes do dia ===========
                 with open('dadosMensais.json','w') as mDados:
                     json.dump(monthList,mDados)
-                print(monthList)
-                print(estacionamento)
+                totpagar = str(totpagar).replace(".0", ",00")
+                print(f'Lucro mensal -> {monthList["LucroMensal"]}')
                 con = input('Deseja cadastrar outro horário? [s/n]: ')
                 if con in 'Nn':
                     break
@@ -354,7 +428,9 @@ def programaprincipal():
                     con = input('Deseja continuar? [s/n]: ')
                     if con in 'nN':
                         break
+
         elif menu == 3:
+            #libera todas as vagas
             empty = True
             for k,v in estacionamento.items():
                 if len(v) == 0:
@@ -375,6 +451,7 @@ def programaprincipal():
                 print(f'{cores["verde"]}Vagas liberadas com SUCESSO!{cores["fechacor"]}')
                 input('Aperte qualquer tecla para continuar:')
                 sleep(1.0)
+
         elif menu == 4:
             #imprime a disponibilidade das vagas e seus horários
             print()
@@ -389,11 +466,9 @@ def programaprincipal():
                     print(f'{cores["verde"]}VAGA LIVRE!{cores["fechacor"]}')
 
             input('Pressione qualquer tecla para continuar:')
-        elif menu == 5:
-            with open('dadosMensais.json', 'r') as menDados:
-                mdados = json.load(menDados)
-                monthList = mdados
 
+        elif menu == 5:
+            #FINALIZA A DIÁRIA
             print('Informe o período atual conforme a lista abaixo:')
             periodosOPC = PrettyTable()
             periodosOPC.add_column('MESES',periodos)
@@ -410,46 +485,78 @@ def programaprincipal():
                         raise ValueError('ERRO, VOCÊ PRECISA DIGITAR ALGO!')
                     elif periodo_user not in monthList.keys():
                         raise ValueError('ERRO, PERÍODO NÃO ENCONTRADO!')
+                    elif monthList[periodo_user][0] > 0:
+                        raise ValueError('ERRO, ESTE PERÍODO JÁ CONTÉM DADOS CADASTRADOS!')
                 except ValueError as Erro:
                     print(Erro)
                 else:
-                    monthList[periodo_user] += monthList["TotalClientes"]
+                    monthList[periodo_user][0] = monthList["TotalClientes"]
+                    monthList[periodo_user][1] = monthList["LucroMensal"]
                     monthList["TotalClientes"] = 0
+                    monthList["LucroMensal"] = 0
 
                 with open('dadosMensais.json','w')as dMen:
                     json.dump(monthList,dMen)
                     print('DIÁRIA FINALIZADA COM SUCESSO!')
                 input('\nAPERTE UMA TECLA PARA CONTINUAR...')
                 break
+
         elif menu == 6:
             with open('dadosMensais.json','r') as dMen:
                 DadosMeses = json.load(dMen)
-                for mes in DadosMeses.keys():
-                    DadosMeses[mes] = random.randint(10,30)
-                # DadosMeses["Janeiro"] = 20
-                # DadosMeses["Fevereiro"] = 30
-
-            print('Gerando relatório!')
-            inicio = int(input('Digite o mês que corresponde ao inicio do período: '))
-            fim = int(input('Digite o mês que corresponde ao final do período: '))
+            print('\n\nGerando relatório!')
+            periodoMenu = PrettyTable()
+            periodoMenu.add_column(f'CÓDIGO DO MÊS', [periodos.index(x) + 1 for x in periodos])
+            periodoMenu.add_column(f'MÊSES', periodos)
+            periodoMenu.set_style(DOUBLE_BORDER)
+            print(periodoMenu)
+            inicio = int(input('Digite o código do mês que corresponde ao inicio do período: '))
+            fim = int(input('Digite o código do mês que corresponde ao final do período: '))
 
             #Estrutura para obter os valores referentes ao período escolhido pelo usuário
             mesesAnalise = []
             for c in range(inicio-1, fim):
-                mesesAnalise.append(periodos[c]) #percorre a lista criada somente com os meses
-            print(mesesAnalise)
-
+                # percorre a lista criada somente com os meses adicionando cada mês correspondente ao índice
+                mesesAnalise.append(periodos[c])
             valores = []
             for mes in mesesAnalise:
-                valores.append(DadosMeses[mes])
-            print(valores)
-            geraGrafico(periodos,valores)
+                valores.append(DadosMeses[mes][0])
+            lucro_mensal = []
+            for meses in mesesAnalise:
+                lucro_mensal.append(DadosMeses[meses][1])
+            dados_lucro = {}
+            for mes,lucros in zip(mesesAnalise,lucro_mensal):
+                dados_lucro.update({mes:lucros})
+            geraGrafico(mesesAnalise,valores,dados_lucro)
 
         elif menu == 7:
             print(f'{cores["azul"]}OBRIGADO POR USAR O GERÊNCIADOR DE VAGAS, SAINDO...{cores["fechacor"]}')
             sleep(1.4)
             break
 
+        elif menu == 8:
+            with open('dadosMensais.json', 'r') as dMen:
+                DadosMeses = json.load(dMen)
+                for mes in DadosMeses.keys():
+                    DadosMeses[mes] = random.randint(10,30)
+
+            print('Gerando relatório (=======> VERSÃO ADMIN.! <======)')
+            print("Esta versão gera 'DADOS FAKE' de forma aleatória somente para a demonstração da funcionalidade.")
+            inicio = int(input('Digite o mês que corresponde ao inicio do período: '))
+            fim = int(input('Digite o mês que corresponde ao final do período: '))
+
+            # Estrutura para obter os valores referentes ao período escolhido pelo usuário
+            mesesAnalise = []
+            for c in range(inicio - 1, fim):
+                # percorre a lista criada somente com os meses adicionando cada meês correspondente ao índice
+                mesesAnalise.append(periodos[c])
+            print(mesesAnalise)
+
+            valores = []
+            for mes in mesesAnalise:
+                valores.append(DadosMeses[mes])
+            print(valores)
+            geraGraficoAdmin(periodos,valores)
+
 
 programaprincipal()
-
