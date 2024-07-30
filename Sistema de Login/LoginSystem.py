@@ -41,7 +41,7 @@ def CriaBD():
 def EnviaEmail(nome,destinatario,lista:list):
     """Função para enviar um e-mail com um arquivo em anexo."""
     try:
-        fromaddr = "autosender31@gmail.com" #endereço de e-mail utilizado para enviar a mensagem com anexo.
+        fromaddr = "" #endereço de e-mail utilizado para enviar a mensagem com anexo.
         toaddr = f'{destinatario}' #endereço de e-mail utilizadado para sinalizar quem receberá a mensagem.
         msg = MIMEMultipart()
 
