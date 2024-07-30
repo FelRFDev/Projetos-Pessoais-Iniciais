@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "project-settings"
+version = "0.1.0"
+description = ""
+authors = ["felrfdev <comunidadehawks@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+pyttsx3 = "^2.90"
+customtkinter = "^5.2.2"
+python-docx = "^1.1.2"
+pytesseract = "^0.3.10"
+gpt4all = "^2.7.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
