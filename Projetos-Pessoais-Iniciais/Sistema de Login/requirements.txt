@@ -1,0 +1,4 @@
+# Apenas bibliotecas nativas do Python são utilizadas neste projeto.
+# Nenhuma instalação adicional é necessária.
+# Only Python's standard library is used in this project.
+# No additional installation required.

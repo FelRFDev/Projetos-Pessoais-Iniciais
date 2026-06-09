@@ -1,0 +1,6 @@
+tqdm
+python-docx
+pyttsx3
+SpeechRecognition
+pywhatkit
+wikipedia
